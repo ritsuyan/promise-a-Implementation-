@@ -18,7 +18,7 @@ class MyPromise {
         }
     }
     resolve (value) {
-        console.log(value,this.onFulfilledCallbacks)
+        //console.log(value,this.onFulfilledCallbacks)
         if(this.state === PENDING) {
             this.state = FULFILLED
             this.value = value
@@ -38,11 +38,14 @@ class MyPromise {
     }
 
     then (onFulfilled, onRejected){
+        //if (typeof onFulfilled)
         let promise2 = null;
+        //console.log(onFulfilled.toString())
         promise2 = new MyPromise((resolve,reject) => {
             if(this.state === PENDING) {
                 this.onFulfilledCallbacks.push(() => {
                     try {
+                       
                       let x = onFulfilled(this.value);
                       this.resolvePromise(promise2, x, resolve, reject)
                     } catch (reason) {
@@ -60,6 +63,7 @@ class MyPromise {
             }
             if(this.state === FULFILLED){
                 try {
+                    
                     let x = onFulfilled(this.value)
                     this.resolvePromise(promise2, x, resolve, reject);
                 } catch (reason) {
@@ -81,7 +85,9 @@ class MyPromise {
     }
 
     resolvePromise(promise2, x, resolve, reject){
-        let called = false;
+       // let called = false;
+       // promise2 当前需要返回的promise x 需要拿到为完成时的值 ==> promise2.resolve(val)
+       //console.log('需要拿到为完成态的值',x)
         if(promise2 === x){
             return reject(new TypeError('Circular reference'));
         }
@@ -89,8 +95,10 @@ class MyPromise {
             try {
                 let then = x.then;
                 if(typeof then === 'function'){
+                     // x.then(onFulfilled,onRejected)
                     then.call(x, (y) => {
-                        if(called) return; called = true;
+                     //   if(called) return; called = true;
+                     //console.log('this',this)
                         this.resolvePromise(promise2, y, resolve, reject)
                     }, (reason) => {
                         if(called) return; called = true;
@@ -107,10 +115,4 @@ class MyPromise {
     }
 }
 
- let p = new MyPromise((resolve, reject) => {
-     setTimeout(() => {
-        resolve(123)
-     }, 0);
-    }).
-  then(res => {console.log(res + 666);return 7}).
-  then(res => {console.log(res)})
+module.exports = MyPromise

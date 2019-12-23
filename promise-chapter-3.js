@@ -46,7 +46,8 @@ class MyPromise {
                 this.onFulfilledCallbacks.push(() => {
                     try {
                       let x = onFulfilled(this.value);
-                      this.resolvePromise(promise2, x, resolve, reject)
+                      resolve(x)
+                    //  this.resolvePromise(promise2, x, resolve, reject)
                     } catch (reason) {
                         reject(reason)
                     }
